@@ -156,6 +156,128 @@ button { font: inherit; color: inherit; cursor: pointer; }
 @media (hover: none), (pointer: coarse) { .kbd-hint { display: none; } }
 @media (max-height: 680px) { .dpad { --s: 52px; } }
 
+/* ---------- 캐릭터 카드 (허브) ---------- */
+.hero {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: linear-gradient(135deg, #241e36, #1a1626);
+  border: 2px solid var(--line);
+  border-radius: 14px;
+}
+.hero-avatar { flex: none; image-rendering: pixelated; background: #120f1b; border-radius: 10px; }
+.hero-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.hero-name { display: flex; align-items: center; gap: 8px; }
+.hero-name b { font-size: 17px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lv {
+  padding: 2px 8px;
+  background: var(--accent);
+  color: #1a1626;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+.xp-bar { height: 8px; background: #120f1b; border-radius: 999px; overflow: hidden; }
+.xp-bar i { display: block; height: 100%; background: linear-gradient(90deg, #a3e635, #22c55e); border-radius: 999px; }
+.hero-sub { font-size: 12px; color: var(--dim); }
+.btn.small { padding: 8px 12px; font-size: 13px; flex: none; }
+.btn.danger { background: #3b1420; border-color: #7f1d1d; color: #fca5a5; }
+.version { margin: 18px 0 0; text-align: center; font-size: 12px; color: #4b4463; }
+
+/* ---------- 캐릭터 만들기 ---------- */
+.screen-title { margin: 8px 0 12px; text-align: center; font-size: 20px; color: var(--accent); }
+.creator-top { position: relative; display: flex; justify-content: center; }
+.creator-top .lv { position: absolute; right: 0; top: 0; }
+.preview-box {
+  padding: 12px;
+  background: repeating-conic-gradient(#1a1724 0% 25%, #17141f 0% 50%) 0 0 / 32px 32px;
+  border: 2px solid var(--line);
+  border-radius: 16px;
+}
+#creator-preview { display: block; image-rendering: pixelated; }
+.name-row { display: flex; align-items: center; gap: 12px; margin: 16px 0 4px; font-weight: 600; font-size: 15px; }
+.text-input {
+  flex: 1;
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--bg);
+  color: var(--text);
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  font: inherit;
+  font-size: 16px;   /* 16px 미만이면 iOS가 화면을 확대함 */
+  user-select: text;
+  -webkit-user-select: text;
+}
+.text-input:focus { outline: none; border-color: var(--accent); }
+.panel-body .text-input { margin-top: 10px; }
+.opt-group { margin-top: 14px; }
+.opt-group h4 { margin: 0 0 8px; font-size: 13px; color: var(--dim); font-weight: 600; }
+.opt-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt {
+  padding: 8px 12px;
+  background: var(--panel2);
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.opt small { font-size: 11px; color: var(--dim); }
+.opt.on { border-color: var(--accent); background: #3a3156; }
+.opt.locked { opacity: .5; }
+.opt.swatch { width: 40px; height: 40px; padding: 0; background: var(--c); display: grid; place-items: center; }
+.opt.swatch small { color: #fff; text-shadow: 0 1px 2px #000; font-weight: 800; }
+.opt.swatch.on { box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--accent); border-color: transparent; }
+.opt-desc { margin: 8px 0 0; font-size: 13px; color: var(--accent); }
+.sticky-actions {
+  position: sticky;
+  bottom: 0;
+  margin-top: 16px;
+  padding: 12px 0 calc(env(safe-area-inset-bottom) + 4px);
+  background: linear-gradient(transparent, var(--bg) 30%);
+}
+
+/* ---------- 개발자 화면 ---------- */
+.icon-btn.ghost { visibility: hidden; }
+.dev-sec { margin-top: 18px; }
+.dev-sec h3 { margin: 0 0 8px; font-size: 14px; color: var(--accent); }
+.dev-info {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 14px;
+  margin: 0;
+  padding: 12px;
+  background: var(--panel);
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  font-size: 13px;
+}
+.dev-info dt { color: var(--dim); }
+.dev-info dd { margin: 0; word-break: break-all; }
+.log-entry { padding: 12px; margin-bottom: 8px; background: var(--panel); border: 2px solid var(--line); border-radius: 12px; }
+.log-head { display: flex; justify-content: space-between; align-items: baseline; }
+.log-head b { color: var(--good); }
+.log-head span { font-size: 12px; color: var(--dim); }
+.log-entry ul { margin: 8px 0 0; padding-left: 18px; font-size: 13px; line-height: 1.6; color: var(--text); }
+.dev-save {
+  max-height: 260px;
+  overflow: auto;
+  margin: 0;
+  padding: 12px;
+  background: #08070d;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  font: 11px/1.5 ui-monospace, Consolas, monospace;
+  color: #a3e635;
+  user-select: text;
+  -webkit-user-select: text;
+}
+.level-up { margin-top: 10px; padding: 10px; background: #2a2340; border-radius: 10px; color: var(--text); text-align: center; }
+.level-up b { color: var(--accent); }
+.level-up small { display: block; color: var(--good); margin-top: 4px; }
+
 /* ---------- 오버레이 / 토스트 ---------- */
 #overlay {
   position: fixed;

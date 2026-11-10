@@ -17,11 +17,14 @@
 </head>
 <body>
 
+<!-- 메인(허브) -->
 <main id="hub" class="screen">
   <header class="hub-head">
-    <h1>POCKET<br>ARCADE</h1>
+    <h1 id="secret-logo">POCKET<br>ARCADE</h1>
     <p>포켓 아케이드 · 미니게임 모음</p>
   </header>
+
+  <section id="hero" class="hero"></section>
 
   <section id="game-list" class="cards"></section>
 
@@ -34,9 +37,59 @@
       <button class="btn primary" id="btn-install" hidden>앱으로 설치하기</button>
     </div>
     <p class="hint" id="install-hint">브라우저 메뉴에서 <b>홈 화면에 추가</b>를 하면 와이파이 없이도 앱처럼 플레이할 수 있어요.</p>
+    <p class="version" id="app-version"></p>
   </section>
 </main>
 
+<!-- 캐릭터 만들기 / 꾸미기 -->
+<main id="creator" class="screen" hidden>
+  <h2 id="creator-title" class="screen-title"></h2>
+  <div class="creator-top">
+    <div class="preview-box"><canvas id="creator-preview"></canvas></div>
+    <span id="creator-level" class="lv"></span>
+  </div>
+  <label class="name-row">이름
+    <input id="creator-name" class="text-input" maxlength="8" placeholder="모험가" autocomplete="off">
+  </label>
+  <div id="creator-opts"></div>
+  <p class="hint">미니게임을 하면 경험치가 쌓여요. 레벨이 오르면 🔒 잠긴 아이템과 색상이 열려요.</p>
+  <div class="btn-col sticky-actions">
+    <button class="btn primary" id="creator-save"></button>
+    <button class="btn" id="creator-cancel">취소</button>
+  </div>
+</main>
+
+<!-- 개발자 화면 -->
+<main id="dev" class="screen" hidden>
+  <header class="game-head">
+    <button class="icon-btn" id="dev-back" aria-label="뒤로">◀</button>
+    <h2>개발자 모드</h2>
+    <span class="icon-btn ghost"></span>
+  </header>
+  <section class="dev-sec">
+    <h3>앱 정보</h3>
+    <dl id="dev-info" class="dev-info"></dl>
+  </section>
+  <section class="dev-sec">
+    <h3>패치 이력</h3>
+    <div id="dev-log"></div>
+  </section>
+  <section class="dev-sec">
+    <h3>도구</h3>
+    <div class="btn-col">
+      <button class="btn" id="dev-update">최신 버전으로 강제 업데이트</button>
+      <button class="btn" id="dev-xp">경험치 +100 (테스트)</button>
+      <button class="btn danger" id="dev-reset">저장 데이터 초기화</button>
+      <button class="btn" id="dev-lock">개발자 모드 잠그고 나가기</button>
+    </div>
+  </section>
+  <section class="dev-sec">
+    <h3>저장 데이터 (원본)</h3>
+    <pre id="dev-save" class="dev-save"></pre>
+  </section>
+</main>
+
+<!-- 게임 -->
 <main id="game" class="screen" hidden>
   <header class="game-head">
     <button class="icon-btn" id="btn-back" aria-label="뒤로">◀</button>
@@ -53,13 +106,16 @@
       <button data-dir="0,1" class="down" aria-label="아래">▼</button>
     </div>
   </div>
-  <p class="kbd-hint">방향키 / WASD 이동 · P 일시정지</p>
+  <p class="kbd-hint">방향키 / WASD 이동 (길게 누르면 연속 이동) · P 일시정지</p>
 </main>
 
 <div id="overlay" hidden></div>
 <div id="toast"></div>
 
+<script src="js/version.js"></script>
+<script src="js/avatar.js"></script>
 <script src="js/core.js"></script>
+<script src="js/dev.js"></script>
 <script src="js/games/dungeon.js"></script>
 </body>
 </html>
