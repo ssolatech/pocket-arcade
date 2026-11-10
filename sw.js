@@ -1,6 +1,6 @@
 // 오프라인 지원: 처음 접속할 때 파일을 기기에 저장해 두고, 이후에는 인터넷 없이도 실행.
 // 온라인일 때는 백그라운드에서 최신 파일을 받아 다음 실행부터 반영한다.
-const CACHE = 'pocket-arcade-v2';
+const CACHE = 'pocket-arcade-v3';
 const ASSETS = [
   './',
   './index.html',

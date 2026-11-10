@@ -282,6 +282,11 @@ window.Arcade = (() => {
         }
         b.onclick = () => {
           if (locked) { toast(`Lv.${o.lv}부터 쓸 수 있어요`, '#facc15'); return; }
+          // 성별을 바꾸면 어울리는 머리 모양으로 자동 변경 (이후 자유롭게 다시 선택 가능)
+          if (group === 'gender' && draft.gender !== o.id) {
+            if (o.id === 'girl' && ['short', 'spiky'].includes(draft.hairStyle)) draft.hairStyle = 'long';
+            if (o.id === 'boy' && ['long', 'ponytail'].includes(draft.hairStyle)) draft.hairStyle = 'short';
+          }
           draft[group] = o.id;
           renderCreator();
         };
