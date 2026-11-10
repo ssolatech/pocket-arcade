@@ -7,8 +7,47 @@ window.Arcade = (() => {
   const SAVE_KEY = 'pocket-arcade-v1';
 
   // ---------- 저장 (기기 브라우저의 localStorage, 서버/DB 불필요) ----------
+  // 저장 데이터 검증: 조작된 백업 코드로 HTML/스크립트가 끼어들지 못하게
+  // 점수류는 숫자만, 꾸미기는 정해진 목록의 값만, 이름은 8글자 문자열만 받는다.
+  const BAD_KEYS = ['__proto__', 'constructor', 'prototype'];
+  const isObj = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
+  const num = (v) => (Number.isFinite(Number(v)) ? Math.max(0, Math.min(1e9, Math.floor(Number(v)))) : 0);
+  function sanitize(src) {
+    const out = {};
+    if (!isObj(src)) return out;
+    if (isObj(src.profile)) {
+      const p = src.profile, o = {};
+      if (isObj(p.look)) {
+        o.look = {};
+        for (const g of Object.keys(Avatar.OPTIONS)) {
+          if (Avatar.OPTIONS[g].some((x) => x.id === p.look[g])) o.look[g] = p.look[g];
+        }
+      }
+      if (typeof p.name === 'string') o.name = p.name.slice(0, 8);
+      if (p.xp !== undefined) o.xp = num(p.xp);
+      out.profile = o;
+    }
+    if (isObj(src.settings)) out.settings = { vibrate: src.settings.vibrate !== false };
+    for (const ns of Object.keys(src)) {                     // 게임별 기록: 숫자 또는 숫자 묶음만
+      if (ns === 'profile' || ns === 'settings' || BAD_KEYS.includes(ns) || !/^[a-z0-9_-]{1,24}$/.test(ns) || !isObj(src[ns])) continue;
+      const o = {};
+      for (const k of Object.keys(src[ns])) {
+        if (BAD_KEYS.includes(k)) continue;
+        const v = src[ns][k];
+        if (isObj(v)) {
+          o[k] = {};
+          for (const ik of Object.keys(v)) if (!BAD_KEYS.includes(ik)) o[k][ik] = num(v[ik]);
+        } else if (typeof v === 'number' || typeof v === 'string') {
+          o[k] = num(v);
+        }
+      }
+      out[ns] = o;
+    }
+    return out;
+  }
+
   let data = {};
-  try { data = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}') || {}; } catch (e) { data = {}; }
+  try { data = sanitize(JSON.parse(localStorage.getItem(SAVE_KEY) || '{}')); } catch (e) { data = {}; }
   function persist() {
     try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch (e) { /* 저장 불가 환경 */ }
   }
@@ -27,8 +66,8 @@ window.Arcade = (() => {
     importCode(code) {
       const bin = atob(code.replace(/\s/g, ''));
       const obj = JSON.parse(new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0))));
-      if (!obj || typeof obj !== 'object' || Array.isArray(obj)) throw new Error('invalid');
-      data = obj;
+      if (!isObj(obj)) throw new Error('invalid');
+      data = sanitize(obj);
       persist();
     },
   };
