@@ -249,10 +249,11 @@
       if (state !== 'play') return;
       if (invuln > 0) invuln -= dt;
 
-      // 좌우 이동 (손가락 위치 > 방향키)
+      // 좌우 이동 (손가락 위치 > 조이스틱(민 세기만큼) > 방향키)
       let want = 0;
-      const h = api.held();
-      if (h && h[0]) want = h[0];
+      const h = api.held(), st = api.stick();
+      if (Math.abs(st.x) > 0.12) want = Math.max(-1, Math.min(1, st.x * 1.2));
+      else if (h && h[0]) want = h[0];
       if (target !== null) {
         const diff = target - p.x;
         want = Math.abs(diff) < 0.05 ? 0 : Math.sign(diff) * Math.min(1, Math.abs(diff) * 3);

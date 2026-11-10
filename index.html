@@ -34,6 +34,7 @@
     <h3>설정</h3>
     <div class="btn-col">
       <button class="btn" id="btn-vibrate"></button>
+      <button class="btn" id="btn-control"></button>
       <button class="btn" id="btn-export">저장 백업 (코드 복사)</button>
       <button class="btn" id="btn-import">저장 불러오기</button>
       <button class="btn primary" id="btn-install" hidden>앱으로 설치하기</button>
@@ -101,6 +102,7 @@
   <div id="hud" class="hud"></div>
   <div id="canvas-wrap"><canvas id="canvas"></canvas></div>
   <div class="pad-area">
+    <div class="stick" id="stick" aria-label="조이스틱"><div class="stick-knob"></div></div>
     <div class="dpad">
       <button data-dir="0,-1" class="up" aria-label="위">▲</button>
       <button data-dir="-1,0" class="left" aria-label="왼쪽">◀</button>

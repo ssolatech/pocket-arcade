@@ -27,7 +27,7 @@ window.Arcade = (() => {
       if (p.xp !== undefined) o.xp = num(p.xp);
       out.profile = o;
     }
-    if (isObj(src.settings)) out.settings = { vibrate: src.settings.vibrate !== false };
+    if (isObj(src.settings)) out.settings = { vibrate: src.settings.vibrate !== false, ctrl: src.settings.ctrl === 1 ? 1 : 0 };
     for (const ns of Object.keys(src)) {                     // 게임별 기록: 숫자 또는 숫자 묶음만
       if (ns === 'profile' || ns === 'settings' || BAD_KEYS.includes(ns) || !/^[a-z0-9_-]{1,24}$/.test(ns) || !isObj(src[ns])) continue;
       const o = {};
@@ -200,6 +200,9 @@ window.Arcade = (() => {
       el.list.appendChild(card);
     }
     $('#btn-vibrate').textContent = '진동: ' + (Store.get('settings', 'vibrate', true) ? '켜짐' : '꺼짐');
+    const ctrl = Store.get('settings', 'ctrl', 0);
+    $('#btn-control').textContent = '조작: ' + (ctrl === 1 ? '방향 버튼 ✚' : '조이스틱 🕹');
+    document.body.classList.toggle('ctrl-dpad', ctrl === 1);
     $('#app-version').textContent = 'v' + APP.version;
   }
 
@@ -209,6 +212,11 @@ window.Arcade = (() => {
 
   $('#btn-vibrate').onclick = () => {
     Store.set('settings', 'vibrate', !Store.get('settings', 'vibrate', true));
+    renderHub();
+  };
+
+  $('#btn-control').onclick = () => {
+    Store.set('settings', 'ctrl', Store.get('settings', 'ctrl', 0) === 1 ? 0 : 1);
     renderHub();
   };
 
@@ -381,6 +389,7 @@ window.Arcade = (() => {
         return html + '</div>';
       },
       held: () => Hold.d,   // 지금 누르고 있는 방향 [dx, dy] 또는 null
+      stick: () => stickVec, // 조이스틱 아날로그 값 { x, y } (-1 ~ 1)
       setButton,            // 게임 전용 버튼 글자/강조 바꾸기
       setHud: (html) => { el.hud.innerHTML = html; },
       overlay: showOverlay,
@@ -439,6 +448,7 @@ window.Arcade = (() => {
     }
     paused = false;
     Hold.stop();
+    stickEnd();
     hideOverlay();
     showScreen('hub');
     renderHub();
@@ -576,6 +586,45 @@ window.Arcade = (() => {
   const padEnd = () => { padHighlight(null); Hold.stop(); };
   ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((ev) => pad.addEventListener(ev, padEnd));
   pad.addEventListener('contextmenu', (e) => e.preventDefault());
+
+  // 가상 조이스틱: 원 안에서 손잡이를 민 방향·세기를 읽는다.
+  // 아날로그 게임은 api.stick() 으로 세기까지, 칸 이동 게임은 상하좌우 4방향(Hold)으로 받는다.
+  const stickEl = $('#stick'), knob = stickEl.querySelector('.stick-knob');
+  let stickVec = { x: 0, y: 0 }, stickOn = false;
+  function stickMove(e) {
+    const r = stickEl.getBoundingClientRect();
+    const lr = el.game.classList.contains('lr');
+    let dx = e.clientX - (r.left + r.width / 2), dy = lr ? 0 : e.clientY - (r.top + r.height / 2);
+    const max = (lr ? r.width : Math.min(r.width, r.height)) * 0.34;
+    const d = Math.hypot(dx, dy);
+    if (d > max) { dx *= max / d; dy *= max / d; }
+    knob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+    stickVec = { x: dx / max, y: dy / max };
+    const mag = Math.hypot(stickVec.x, stickVec.y);
+    if (mag < 0.35) { Hold.stop(); return; }
+    // 4방향: 현재 방향을 조금 더 유지(대각선 근처에서 덜덜 떨리지 않게)
+    const ax = Math.abs(stickVec.x), ay = Math.abs(stickVec.y);
+    let horiz = ax > ay;
+    if (Hold.d) horiz = Hold.d[0] ? ax > ay * 0.8 : ax > ay * 1.25;
+    Hold.start(horiz ? [Math.sign(stickVec.x), 0] : [0, Math.sign(stickVec.y)]);
+  }
+  function stickEnd() {
+    stickOn = false;
+    stickEl.classList.remove('on');
+    knob.style.transform = '';
+    stickVec = { x: 0, y: 0 };
+    Hold.stop();
+  }
+  stickEl.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    try { stickEl.setPointerCapture(e.pointerId); } catch (err) { /* 무시 */ }
+    stickOn = true;
+    stickEl.classList.add('on');
+    stickMove(e);
+  });
+  stickEl.addEventListener('pointermove', (e) => { if (stickOn) stickMove(e); });
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((ev) => stickEl.addEventListener(ev, stickEnd));
+  stickEl.addEventListener('contextmenu', (e) => e.preventDefault());
 
   // 캔버스 위를 드래그하면 그 방향으로 한 칸씩 이동
   let swipe = null;

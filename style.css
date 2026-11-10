@@ -162,6 +162,46 @@ button { font: inherit; color: inherit; cursor: pointer; }
 }
 .dpad button.down-state { background: #3a3156; color: var(--text); border-color: var(--accent); }
 .lr .dpad .up, .lr .dpad .down { visibility: hidden; }
+
+/* 가상 조이스틱 */
+.stick {
+  --size: 150px;
+  position: relative;
+  flex: none;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  background: radial-gradient(circle, #2e2742 0%, #241e36 55%, #1a1626 100%);
+  border: 2px solid var(--line);
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, .5);
+  touch-action: none;
+}
+.stick::before {                       /* 가이드 링 */
+  content: '';
+  position: absolute;
+  inset: 22%;
+  border-radius: 50%;
+  border: 2px dashed #3a3156;
+}
+.lr .stick { height: calc(var(--size) * 0.62); border-radius: 999px; }
+.lr .stick::before { inset: 30% 14%; border-radius: 999px; }
+.stick-knob {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 42%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle at 35% 30%, #4b4266, #2a2340);
+  border: 2px solid #5d5480;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .5);
+  pointer-events: none;
+}
+.stick.on .stick-knob { border-color: var(--accent); background: radial-gradient(circle at 35% 30%, #fde68a, #facc15); }
+.lr .stick-knob { width: auto; height: 68%; }
+body:not(.ctrl-dpad) .dpad { display: none; }
+body.ctrl-dpad .stick { display: none; }
 .dpad .up { grid-area: 1 / 2; }
 .dpad .left { grid-area: 2 / 1; }
 .dpad .right { grid-area: 2 / 3; }
@@ -171,11 +211,11 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 /* PC(마우스)에서는 가상 패드 숨김, 터치 기기에서는 키보드 안내 숨김 */
 @media (hover: hover) and (pointer: fine) {
-  .dpad { display: none; }
+  .dpad, .stick { display: none !important; }
   .pad-area:not(.has-btns) { display: none; }
 }
 @media (hover: none), (pointer: coarse) { .kbd-hint { display: none; } }
-@media (max-height: 680px) { .dpad { --s: 52px; } }
+@media (max-height: 680px) { .dpad { --s: 52px; } .stick { --size: 124px; } }
 
 /* ---------- 캐릭터 카드 (허브) ---------- */
 .hero {
