@@ -23,34 +23,26 @@ window.Avatar = (() => {
       '....oPPooPPo....',
       '....oBBooBBo....',
     ],
-    // 여자: 속눈썹 + 큰 눈 + 분홍 입술 + 카라 원피스 + 레이스 단 + 빨간 구두
+    // 여자: 남자와 같은 얼굴 + 상의(옷 색) + 기본 빨간 치마
     girl: [
       '................',
       '................',
       '....oooooooo....',
       '...oSSSSSSSSo...',
       '..oSSSSSSSSSSo..',
-      '..oSkSSSSSSkSo..',
-      '..oSkkSSSSkkSo..',
-      '..oSkwSSSSwkSo..',
-      '..oSppSllSppSo..',
+      '..oSSSSSSSSSSo..',
+      '..oSSkSSSSkSSo..',
+      '..oSSkSSSSkSSo..',
+      '..oSpSSmmSSpSo..',
       '...oSSSSSSSSo...',
-      '...oCwwCCwwCo...',
+      '...oCCCCCCCCo...',
       '..oSCCCCCCCCSo..',
-      '...oCCcccCCCo...',
-      '..oCCCCCCCCCCo..',
-      '.oCwCwCwCwCwCwo.',
-      '....oRo..oRo....',
+      '..oSCcCCCCcCSo..',
+      '...oKKKKKKKKo...',
+      '..oKKQKKKKQKKo..',
+      '....oBo..oBo....',
     ],
   };
-
-  // 여자 캐릭터 머리 리본 (머리 위에 겹침)
-  const RIBBON = [
-    '..........oo.oo.',
-    '.........oRRoRRo',
-    '.........oRRrRRo',
-    '..........oo.oo.',
-  ];
 
   const HAIR = {
     short: [
@@ -267,10 +259,9 @@ window.Avatar = (() => {
     paint(ctx, BODY[look.gender] || BODY.boy, {
       o: O, S: skin, k: O, p: '#f4a3a3', m: '#b4533a',
       C: cloth, c: shade(cloth, 0.75), w: '#ffffff', P: '#3f3a52', B: '#5b3a29',
-      l: '#e8607a', R: '#e11d48',
+      K: '#dc2626', Q: '#b91c1c',
     }, p);
     paint(ctx, HAIR[look.hairStyle] || HAIR.short, { o: O, H: hair, h: shade(hair, 0.75) }, p);
-    if (look.gender === 'girl') paint(ctx, RIBBON, { o: O, R: '#fb7185', r: '#be123c' }, p);
     const art = ITEM_ART[look.item];
     if (art) {
       paint(ctx, art, {
