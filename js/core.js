@@ -115,7 +115,6 @@ window.Arcade = (() => {
 
   const games = [];
   const UPCOMING = [
-    { title: '점프 플랫폼', desc: '발판을 건너며 코인 모으기' },
     { title: '농장 키우기', desc: '씨앗을 심고 수확하는 힐링 게임' },
   ];
   let current = null;   // { def, inst }

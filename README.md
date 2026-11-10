@@ -18,6 +18,7 @@
 | `js/dev.js` | 개발자 화면 |
 | `js/games/dungeon.js` | 던전 탈출 |
 | `js/games/meteor.js` | 별똥별 피하기 |
+| `js/games/jump.js` | 구름 점프 |
 
 ## 새 미니게임 추가하기
 1. `js/games/새게임.js` 파일을 만들고 `Arcade.register({ id, title, desc, drawIcon, create })`로 등록
