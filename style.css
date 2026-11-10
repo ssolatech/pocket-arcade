@@ -144,6 +144,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   touch-action: none;
 }
 .dpad button.down-state { background: #3a3156; color: var(--text); border-color: var(--accent); }
+.lr .dpad .up, .lr .dpad .down { visibility: hidden; }
 .dpad .up { grid-area: 1 / 2; }
 .dpad .left { grid-area: 2 / 1; }
 .dpad .right { grid-area: 2 / 3; }

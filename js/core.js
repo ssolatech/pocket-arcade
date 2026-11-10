@@ -76,7 +76,6 @@ window.Arcade = (() => {
 
   const games = [];
   const UPCOMING = [
-    { title: '탄막 피하기', desc: '쏟아지는 장애물을 피해 오래 버티기' },
     { title: '점프 플랫폼', desc: '발판을 건너며 코인 모으기' },
     { title: '농장 키우기', desc: '씨앗을 심고 수확하는 힐링 게임' },
   ];
@@ -329,6 +328,17 @@ window.Arcade = (() => {
       profile: () => Profile.get(),
       startHp: () => Profile.startHp(Profile.get().level),
       addXp: (n) => Profile.addXp(n),
+      // 경험치 지급 + 결과 화면용 HTML (점수 10점 = 경험치 1)
+      xpReport(score) {
+        const r = Profile.addXp(score / 10);
+        let html = `<div class="level-up">경험치 <b>+${r.gained} EXP</b>`;
+        if (r.leveledUp) {
+          html += `<br>🎉 <b>레벨 업! Lv.${r.level}</b>`;
+          if (r.unlocked.length) html += `<small>새로 열림: ${r.unlocked.join(', ')}</small>`;
+        }
+        return html + '</div>';
+      },
+      held: () => Hold.d,   // 지금 누르고 있는 방향 [dx, dy] 또는 null
       setHud: (html) => { el.hud.innerHTML = html; },
       overlay: showOverlay,
       hideOverlay,
@@ -340,6 +350,7 @@ window.Arcade = (() => {
 
   function openGame(def) {
     showScreen('game');
+    el.game.classList.toggle('lr', def.controls === 'lr');   // 좌우만 쓰는 게임은 위/아래 버튼 숨김
     el.title.textContent = def.title;
     el.hud.innerHTML = '';
     paused = false;
@@ -497,6 +508,16 @@ window.Arcade = (() => {
     swipe = { x: e.clientX, y: e.clientY };
   });
   ['pointerup', 'pointercancel', 'pointerleave'].forEach((ev) => el.wrap.addEventListener(ev, () => { swipe = null; }));
+
+  // 손가락/마우스 위치를 게임에 전달 (onPointer 를 가진 게임만). 좌표는 캔버스 기준 0~1
+  function pointer(e) {
+    if (!current || !current.inst.onPointer) return;
+    const release = e.type !== 'pointerdown' && e.type !== 'pointermove';
+    if (!release && (paused || !el.overlay.hidden)) return;
+    const r = el.canvas.getBoundingClientRect();
+    current.inst.onPointer(e.type, (e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height);
+  }
+  ['pointerdown', 'pointermove', 'pointerup', 'pointercancel', 'pointerleave'].forEach((ev) => el.wrap.addEventListener(ev, pointer));
 
   // ---------- 게임 루프 ----------
   let last = performance.now();

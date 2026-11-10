@@ -218,10 +218,10 @@ window.Avatar = (() => {
       { id: 'none', label: '없음', desc: '맨손으로 모험!' },
       { id: 'flower', label: '꽃', desc: '귀여움 +100 (게임 효과 없음)' },
       { id: 'stick', label: '나무 막대', desc: '모험가의 첫 장비 (게임 효과 없음)' },
-      { id: 'shield', label: '방패', desc: '스테이지마다 몬스터 공격 1회 막기', lv: 2 },
-      { id: 'lantern', label: '랜턴', desc: '어두운 스테이지에서 시야가 넓어짐', lv: 3 },
-      { id: 'sword', label: '검', desc: '스테이지마다 몬스터 1마리 퇴치 (+200점)', lv: 5 },
-      { id: 'staff', label: '마법 지팡이', desc: '몬스터 이동 속도 20% 감소', lv: 7 },
+      { id: 'shield', label: '방패', desc: '공격 1회 막기 (던전: 스테이지마다)', lv: 2 },
+      { id: 'lantern', label: '랜턴', desc: '던전: 어둠 속 시야 확대 · 별똥별: 코인 자석', lv: 3 },
+      { id: 'sword', label: '검', desc: '몬스터·운석 1개 부수기 (던전: 스테이지마다)', lv: 5 },
+      { id: 'staff', label: '마법 지팡이', desc: '적의 움직임이 느려짐', lv: 7 },
     ],
   };
 
