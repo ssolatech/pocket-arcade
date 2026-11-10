@@ -307,7 +307,9 @@ window.Arcade = (() => {
       sec.appendChild(h);
       const row = document.createElement('div');
       row.className = 'opt-row';
+      const genderFixed = group === 'gender' && !creatorFirst;   // 성별은 처음 만들 때만 선택
       for (const o of Avatar.OPTIONS[group]) {
+        if (genderFixed && draft.gender !== o.id) continue;
         const locked = o.lv && o.lv > level;
         const b = document.createElement('button');
         b.className = 'opt' + (o.color ? ' swatch' : '') + (draft[group] === o.id ? ' on' : '') + (locked ? ' locked' : '');
@@ -319,6 +321,7 @@ window.Arcade = (() => {
           b.innerHTML = escapeHtml(o.label) + (locked ? ` <small>🔒Lv${o.lv}</small>` : '');
         }
         b.onclick = () => {
+          if (genderFixed) { toast('성별은 처음 만들 때만 정할 수 있어요'); return; }
           if (locked) { toast(`Lv.${o.lv}부터 쓸 수 있어요`, '#facc15'); return; }
           // 성별을 바꾸면 기본 머리 모양으로 변경: 여자 → 단발, 남자 → 짧은 머리 (이후 자유롭게 다시 선택 가능)
           if (group === 'gender' && draft.gender !== o.id) draft.hairStyle = o.id === 'girl' ? 'bob' : 'short';
@@ -328,6 +331,12 @@ window.Arcade = (() => {
         row.appendChild(b);
       }
       sec.appendChild(row);
+      if (group === 'gender') {
+        const d = document.createElement('p');
+        d.className = 'opt-desc';
+        d.textContent = creatorFirst ? '⚠ 성별은 지금만 정할 수 있고, 나중에 바꿀 수 없어요' : '성별은 처음 만들 때만 정할 수 있어요';
+        sec.appendChild(d);
+      }
       if (group === 'item') {
         const d = document.createElement('p');
         d.className = 'opt-desc';
