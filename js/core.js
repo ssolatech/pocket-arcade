@@ -11,7 +11,7 @@ window.Arcade = (() => {
   // 점수류는 숫자만, 꾸미기는 정해진 목록의 값만, 이름은 8글자 문자열만 받는다.
   const BAD_KEYS = ['__proto__', 'constructor', 'prototype'];
   const isObj = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
-  const num = (v) => (Number.isFinite(Number(v)) ? Math.max(0, Math.min(1e9, Math.floor(Number(v)))) : 0);
+  const num = (v) => (Number.isFinite(Number(v)) ? Math.max(0, Math.min(1e13, Math.floor(Number(v)))) : 0);   // 1e13: 시각(ms)도 저장 가능
   function sanitize(src) {
     const out = {};
     if (!isObj(src)) return out;
@@ -114,9 +114,7 @@ window.Arcade = (() => {
   }
 
   const games = [];
-  const UPCOMING = [
-    { title: '농장 키우기', desc: '씨앗을 심고 수확하는 힐링 게임' },
-  ];
+  const UPCOMING = [];
   let current = null;   // { def, inst }
   let paused = false;
 
@@ -187,7 +185,7 @@ window.Arcade = (() => {
       card.innerHTML =
         `<canvas class="card-icon" width="64" height="64"></canvas>` +
         `<div class="card-text"><b>${g.title}</b><span>${g.desc}</span>` +
-        `<small>최고 점수 ${Store.get(g.id, 'best', 0)}</small></div>`;
+        `<small>${g.bestLabel || '최고 점수'} ${Store.get(g.id, 'best', 0)}</small></div>`;
       g.drawIcon(card.querySelector('canvas').getContext('2d'), 64);
       card.onclick = () => openGame(g);
       el.list.appendChild(card);
@@ -395,6 +393,7 @@ window.Arcade = (() => {
   function openGame(def) {
     showScreen('game');
     el.game.classList.toggle('lr', def.controls === 'lr');   // 좌우만 쓰는 게임은 위/아래 버튼 숨김
+    $('#btn-pause').style.visibility = def.noPause ? 'hidden' : '';   // 실시간 게임은 일시정지 없음
     el.title.textContent = def.title;
     el.hud.innerHTML = '';
     paused = false;
@@ -492,6 +491,11 @@ window.Arcade = (() => {
     }
     if (!current || tag === 'INPUT') return;
     if (e.code === 'Escape' || e.code === 'KeyP') { e.preventDefault(); pause(); return; }
+    if ((e.code === 'Enter' || e.code === 'Space') && current.inst.onAction) {   // 실행 키 (농장 등)
+      e.preventDefault();
+      if (!e.repeat && !paused) current.inst.onAction();
+      return;
+    }
     const d = KEYS[e.code];
     if (!d) return;
     e.preventDefault();
