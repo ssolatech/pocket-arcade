@@ -127,7 +127,24 @@ button { font: inherit; color: inherit; cursor: pointer; }
 #canvas-wrap { position: relative; flex: 1; min-height: 0; margin: 8px 0; }
 #canvas { position: absolute; left: 0; top: 0; display: block; }
 
-.pad-area { display: flex; justify-content: center; padding: 4px 0; }
+.pad-area { display: flex; justify-content: center; align-items: center; gap: 22px; padding: 4px 0; }
+.game-btns { display: flex; flex-direction: column; gap: 10px; }
+.game-btns:empty { display: none; }
+.game-btn {
+  min-width: 72px;
+  height: 60px;
+  padding: 0 12px;
+  background: var(--panel2);
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text);
+  touch-action: none;
+}
+.game-btn.primary { background: var(--accent); border-color: var(--accent); color: #1a1626; }
+.game-btn.active { background: #22c55e; border-color: #22c55e; color: #052e16; }
+.game-btn:active { transform: translateY(1px); }
 .dpad {
   --s: 64px;
   display: grid;
@@ -153,7 +170,10 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .kbd-hint { margin: 4px 0 0; text-align: center; font-size: 13px; color: var(--dim); }
 
 /* PC(마우스)에서는 가상 패드 숨김, 터치 기기에서는 키보드 안내 숨김 */
-@media (hover: hover) and (pointer: fine) { .pad-area { display: none; } }
+@media (hover: hover) and (pointer: fine) {
+  .dpad { display: none; }
+  .pad-area:not(.has-btns) { display: none; }
+}
 @media (hover: none), (pointer: coarse) { .kbd-hint { display: none; } }
 @media (max-height: 680px) { .dpad { --s: 52px; } }
 

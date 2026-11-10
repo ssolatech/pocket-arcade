@@ -381,6 +381,7 @@ window.Arcade = (() => {
         return html + '</div>';
       },
       held: () => Hold.d,   // 지금 누르고 있는 방향 [dx, dy] 또는 null
+      setButton,            // 게임 전용 버튼 글자/강조 바꾸기
       setHud: (html) => { el.hud.innerHTML = html; },
       overlay: showOverlay,
       hideOverlay,
@@ -394,6 +395,7 @@ window.Arcade = (() => {
     showScreen('game');
     el.game.classList.toggle('lr', def.controls === 'lr');   // 좌우만 쓰는 게임은 위/아래 버튼 숨김
     $('#btn-pause').style.visibility = def.noPause ? 'hidden' : '';   // 실시간 게임은 일시정지 없음
+    renderGameButtons(def);
     el.title.textContent = def.title;
     el.hud.innerHTML = '';
     paused = false;
@@ -401,6 +403,32 @@ window.Arcade = (() => {
     resizeCanvas();
     current = { def, inst: def.create(makeCtx(def)) };
     history.pushState({ screen: 'game' }, '');   // 안드로이드 뒤로가기 = 메뉴로
+  }
+
+  // 게임 전용 버튼 (예: A 행동, 🔨 만들기). def.buttons = [{ id, label, key, primary }]
+  function renderGameButtons(def) {
+    const box = $('#game-btns');
+    box.innerHTML = '';
+    const list = def.buttons || [];
+    $('.pad-area').classList.toggle('has-btns', list.length > 0);
+    for (const b of list) {
+      const btn = document.createElement('button');
+      btn.className = 'game-btn' + (b.primary ? ' primary' : '');
+      btn.dataset.id = b.id;
+      btn.textContent = b.label;
+      btn.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        if (current && !paused && el.overlay.hidden && current.inst.onButton) current.inst.onButton(b.id);
+      });
+      btn.addEventListener('contextmenu', (e) => e.preventDefault());
+      box.appendChild(btn);
+    }
+  }
+  function setButton(id, label, active) {
+    const btn = document.querySelector(`#game-btns [data-id="${id}"]`);
+    if (!btn) return;
+    if (label !== undefined) btn.textContent = label;
+    btn.classList.toggle('active', !!active);
   }
 
   // 어떤 화면이든 허브로 돌아가기
@@ -491,6 +519,12 @@ window.Arcade = (() => {
     }
     if (!current || tag === 'INPUT') return;
     if (e.code === 'Escape' || e.code === 'KeyP') { e.preventDefault(); pause(); return; }
+    const gb = (current.def.buttons || []).find((b) => b.key === e.code);    // 게임 전용 버튼 단축키
+    if (gb && current.inst.onButton) {
+      e.preventDefault();
+      if (!e.repeat && !paused) current.inst.onButton(gb.id);
+      return;
+    }
     if ((e.code === 'Enter' || e.code === 'Space') && current.inst.onAction) {   // 실행 키 (농장 등)
       e.preventDefault();
       if (!e.repeat && !paused) current.inst.onAction();
